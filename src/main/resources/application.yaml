@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: "recipe-system"
+  datasource:
+    url: jdbc:mysql://localhost:3306/recipe
+    username: sa
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database: mysql
+    show-sql: true
+
+server:
+  ssl:
+    enabled: false
+  servlet:
+    context-path: /${spring.application.name}
