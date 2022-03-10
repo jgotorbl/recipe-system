@@ -5,7 +5,6 @@ import com.jgb.recipesystem.database.repository.RecipeRepository;
 import com.jgb.recipesystem.exception.DuplicateEntryException;
 import com.jgb.recipesystem.exception.RecipeNotFoundException;
 import com.jgb.recipesystem.model.RecipeDTO;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,11 +37,6 @@ public class RecipeServiceTest {
 
     @Autowired
     private RecipeService recipeService;
-
-    @BeforeEach
-    void setUp() {
-
-    }
 
     @Test
     void createRecipe_whenRecipeNameExists_throwsDuplicateEntryException() {
