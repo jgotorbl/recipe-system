@@ -1,4 +1,4 @@
-package com.jgb.recipesystem.controller;
+package com.jgb.recipesystem.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 /**
  * WebSecurityConfig
  * <br>
- * <code>com.jgb.recipesystem.controller.WebSecurityConfig</code>
+ * <code>com.jgb.recipesystem.configuration.WebSecurityConfig</code>
  * <br>
  *
  * @author Jaime Gotor Blazquez
