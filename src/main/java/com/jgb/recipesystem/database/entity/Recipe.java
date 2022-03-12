@@ -29,7 +29,7 @@ public class Recipe {
     private Long id;
     @Column(nullable = false)
     private Timestamp creationDateTime;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
     @Column(nullable = false)
     private boolean vegetarian;

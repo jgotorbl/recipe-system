@@ -15,3 +15,9 @@ server:
     enabled: false
   servlet:
     context-path: /${spring.application.name}
+
+springdoc:
+  api-docs:
+    path: /api-documentation
+  swagger-ui:
+      path: /swagger-documentation.html
