@@ -1,0 +1,177 @@
+{
+	"info": {
+		"_postman_id": "7af26855-859a-4ee5-82d4-64ef859e0af1",
+		"name": "Recipe system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Recipe",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"pizza_quatro_fromaggi\",\n    \"vegetarian\": false,\n    \"servings\": 4,\n    \"ingredients\": [\n        \"pizza crust\",\n        \"tomato\",\n        \"blue cheese\",\n        \"roquefort\",\n        \"mozarella\",\n        \"gouda\"\n    ],\n    \"cookingInstructions\": \"put all the ingredients on top of each other and cook in the oven for 15 minutes at 200C\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/recipe-system/create-recipe",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipe-system",
+						"create-recipe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Recipe",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/recipe-system/get-recipe/pizza_quatro_fromaggi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipe-system",
+						"get-recipe",
+						"pizza_quatro_fromaggi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Recipe",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"pizza_quatro_fromaggi\",\n    \"vegetarian\": true,\n    \"servings\": 3,\n    \"ingredients\": [\n        \"pizza crust\",\n        \"tomato\",\n        \"blue cheese\",\n        \"roquefort\",\n        \"mozarella\",\n        \"gouda\"\n    ],\n    \"cookingInstructions\": \"put all the ingredients on top of each other and cook in the oven for 15 minutes at 200C\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/recipe-system/update-recipe",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipe-system",
+						"update-recipe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Recipe",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/recipe-system/delete-recipe/pizza_quatro_fromaggi",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipe-system",
+						"delete-recipe",
+						"pizza_quatro_fromaggi"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
