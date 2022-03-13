@@ -19,6 +19,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotBlank;
+
 /**
  * RecipeController
  * <br>
@@ -31,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@Validated
 public class RecipeController {
 
     private final RecipeValidator recipeValidator;
@@ -72,7 +75,7 @@ public class RecipeController {
                         description = "The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).",
                         content = {
                                 @Content(
-                                        mediaType = "text/plain",
+                                        mediaType = "application/json",
                                         examples = {
                                                 @ExampleObject("[{\"code\": \"greater_than_zero\",\"fieldName\": \"servings\",\"rejectedValue\": -1,\"message\": \"Please specify a value greater than zero.\"}]"),
                                                 @ExampleObject("{\"message\": \"A recipe with name pizza_quatro_fromaggi already exists.\"}")
@@ -141,7 +144,7 @@ public class RecipeController {
             }
     )
     @GetMapping(value = "/get-recipe/{name}")
-    public ResponseEntity<RecipeDTO> getRecipe(@PathVariable("name") String recipeName) throws RecipeNotFoundException {
+    public ResponseEntity<RecipeDTO> getRecipe(@Validated @PathVariable("name") @NotBlank(message = "path variable cannot be blank") String recipeName) throws RecipeNotFoundException {
         RecipeDTO recipeDTO = recipeService.getRecipe(recipeName);
         return ResponseEntity.ok(recipeDTO);
     }
@@ -214,14 +217,23 @@ public class RecipeController {
             description = "Deletes a recipe with a specific name from the system, if any is found",
             responses = {
                     @ApiResponse(responseCode = "204", description = "The server has successfully fulfilled the request and that there is no additional content to send in the responde payload body."),
-                    @ApiResponse(responseCode = "400", description = "The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing)."),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "The server cannot or will not process the request due to something that is perceived to be a client error (e.g., malformed request syntax, invalid request message framing, or deceptive request routing).",
+                            content = {
+                                    @Content(
+                                            mediaType = "application/json",
+                                            examples = @ExampleObject("[{\"fieldName\": \"recipeName\",\"rejectedValue\": \" \",\"message\": \"name cannot be null or empty\"}]")
+                                    )
+                            }
+                    ),
                     @ApiResponse(responseCode = "401", description = "The server understood the request but the user has unauthorized access to this resource."),
                     @ApiResponse(responseCode = "403", description = "The server understood the request but the user has forbidden access to this resource."),
                     @ApiResponse(responseCode = "500", description = "The server encountered an unexpected condition that prevented it from fulfilling the request.")
             }
     )
     @DeleteMapping(value = "/delete-recipe/{name}")
-    public ResponseEntity<Void> deleteRecipe(@PathVariable("name") String recipeName) throws RecipeNotFoundException {
+    public ResponseEntity<Void> deleteRecipe(@Validated @PathVariable("name")  @NotBlank(message = "path variable cannot be blank") String recipeName) throws RecipeNotFoundException {
         recipeService.deleteRecipe(recipeName);
         return ResponseEntity.noContent().build();
     }

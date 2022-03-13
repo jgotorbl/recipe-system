@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 /**
@@ -38,9 +39,12 @@ public class RecipeControllerExceptionHandler {
         return ResponseEntity.badRequest().body(errorMessageList);
     }
 
-    private ErrorMessage mapToErrorMessage(FieldError e) {
-        return ErrorMessage.builder().code(e.getCode()).message(e.getDefaultMessage())
-                .rejectedValue(e.getRejectedValue()).fieldName(e.getField()).build();
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException exception) {
+        List<ErrorMessage> errorMessageList = exception.getConstraintViolations().stream().map(e ->
+                ErrorMessage.builder().fieldName("recipeName").rejectedValue(e.getInvalidValue())
+                        .message(e.getMessage()).build()).toList();
+        return ResponseEntity.badRequest().body(errorMessageList);
     }
 
     /**
@@ -54,6 +58,11 @@ public class RecipeControllerExceptionHandler {
     })
     public ResponseEntity<Object> customException(Exception e) {
         return ResponseEntity.badRequest().body(ErrorMessage.builder().message(e.getMessage()).build());
+    }
+
+    private ErrorMessage mapToErrorMessage(FieldError e) {
+        return ErrorMessage.builder().code(e.getCode()).message(e.getDefaultMessage())
+                .rejectedValue(e.getRejectedValue()).fieldName(e.getField()).build();
     }
 
 }
