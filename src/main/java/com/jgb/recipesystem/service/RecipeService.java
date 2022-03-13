@@ -58,7 +58,7 @@ public class RecipeService {
     public RecipeDTO getRecipe(String recipeName) throws RecipeNotFoundException {
         Optional<Recipe> recipeOptional = recipeRepository.findOneByName(recipeName);
         return recipeOptional.map(RecipeMapper.MAPPER::toRecipeDTO)
-                .orElseThrow(() -> new RecipeNotFoundException("Could not find recipe with name" + recipeName));
+                .orElseThrow(() -> new RecipeNotFoundException("Could not find recipe with name " + recipeName));
     }
 
     /**

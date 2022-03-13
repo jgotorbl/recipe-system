@@ -85,7 +85,7 @@ public class RecipeServiceTest {
         //when
         Exception exception = assertThrows(RecipeNotFoundException.class, () ->  recipeService.getRecipe(recipeDto.getName()));
         //then
-        String actualMessage = "Could not find recipe with name" + recipeDto.getName();
+        String actualMessage = "Could not find recipe with name " + recipeDto.getName();
         assertEquals(actualMessage, exception.getMessage());
     }
 
@@ -97,7 +97,7 @@ public class RecipeServiceTest {
         //when
         Exception exception = assertThrows(RecipeNotFoundException.class, () ->  recipeService.updateRecipe(recipeDto));
         //then
-        String actualMessage = "Could not find recipe with name" + recipeDto.getName();
+        String actualMessage = "Could not find recipe with name " + recipeDto.getName();
         assertEquals(actualMessage, exception.getMessage());
         verify(recipeRepository, never()).save(any(Recipe.class));
     }
