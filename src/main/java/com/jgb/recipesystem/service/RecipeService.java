@@ -32,6 +32,12 @@ public class RecipeService {
 
     private final RecipeRepository recipeRepository;
 
+    /**
+     * Handles the logic of creating a new recipe
+     *
+     * @param recipeDTO recipe object to be created
+     * @throws DuplicateEntryException if there is a recipe with the same name in the DB
+     */
     public void createRecipe(RecipeDTO recipeDTO) throws DuplicateEntryException {
         Optional<Recipe> existingRecipe = recipeRepository.findOneByName(recipeDTO.getName());
         if (existingRecipe.isPresent()) {
@@ -42,6 +48,25 @@ public class RecipeService {
         recipeRepository.save(recipe);
     }
 
+    /**
+     * Retrieves info about a specific recipe
+     *
+     * @param recipeName name of the recipe to retrieve
+     * @return an object containing all the recipe information
+     * @throws RecipeNotFoundException if a recipe with the name passed as argument is not found in the database
+     */
+    public RecipeDTO getRecipe(String recipeName) throws RecipeNotFoundException {
+        Optional<Recipe> recipeOptional = recipeRepository.findOneByName(recipeName);
+        return recipeOptional.map(RecipeMapper.MAPPER::toRecipeDTO)
+                .orElseThrow(() -> new RecipeNotFoundException("Could not find recipe with name" + recipeName));
+    }
+
+    /**
+     * Updates a recipe, if a recipe with that name is found in the DB
+     *
+     * @param recipeDTO object containing information about the new recipe
+     * @throws RecipeNotFoundException if a recipe with the name passed in recipeDTO is not found in the database
+     */
     public void updateRecipe(RecipeDTO recipeDTO) throws RecipeNotFoundException {
         Optional<Recipe> recipeOptional = recipeRepository.findOneByName(recipeDTO.getName());
         if (recipeOptional.isEmpty()) {
@@ -54,18 +79,18 @@ public class RecipeService {
 
     }
 
+    /**
+     * Deletes a recipe
+     *
+     * @param recipeName name of the recipe to delete
+     * @throws RecipeNotFoundException if a recipe with the name passed as argument is not found in the database.
+     */
     public void deleteRecipe(String recipeName) throws RecipeNotFoundException {
         Optional<Recipe> recipeToDelete = recipeRepository.findOneByName(recipeName);
         if (recipeToDelete.isEmpty()) {
             throw new RecipeNotFoundException("Could not find recipe with name " + recipeName);
         }
         recipeRepository.deleteByName(recipeName);
-    }
-
-    public RecipeDTO getRecipe(String recipeName) throws RecipeNotFoundException {
-        Optional<Recipe> recipeOptional = recipeRepository.findOneByName(recipeName);
-        return recipeOptional.map(RecipeMapper.MAPPER::toRecipeDTO)
-                .orElseThrow(() -> new RecipeNotFoundException("Could not find recipe with name" + recipeName));
     }
 
 }
