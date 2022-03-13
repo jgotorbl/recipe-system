@@ -45,7 +45,7 @@ public class RecipeService {
     public void updateRecipe(RecipeDTO recipeDTO) throws RecipeNotFoundException {
         Optional<Recipe> recipeOptional = recipeRepository.findOneByName(recipeDTO.getName());
         if (recipeOptional.isEmpty()) {
-            throw new RecipeNotFoundException("Could not find recipe with name" + recipeDTO.getName());
+            throw new RecipeNotFoundException("Could not find recipe with name " + recipeDTO.getName());
         }
         Recipe recipe = RecipeMapper.MAPPER.toRecipeEntity(recipeDTO);
         recipe.setId(recipeOptional.get().getId());

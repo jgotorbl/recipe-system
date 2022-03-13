@@ -21,6 +21,7 @@ import lombok.Data;
 public class ErrorMessage {
 
     private String code;
+    private String fieldName;
     private Object rejectedValue;
     private String message;
 

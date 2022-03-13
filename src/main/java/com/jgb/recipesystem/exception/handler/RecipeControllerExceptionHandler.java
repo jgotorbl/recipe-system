@@ -40,7 +40,7 @@ public class RecipeControllerExceptionHandler {
 
     private ErrorMessage mapToErrorMessage(FieldError e) {
         return ErrorMessage.builder().code(e.getCode()).message(e.getDefaultMessage())
-                .rejectedValue(e.getRejectedValue()).build();
+                .rejectedValue(e.getRejectedValue()).fieldName(e.getField()).build();
     }
 
     /**
