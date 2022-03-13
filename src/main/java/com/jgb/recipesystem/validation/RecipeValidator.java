@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.*;
+import org.springframework.validation.AbstractBindingResult;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.Validator;
 
-import javax.management.loading.MLetContent;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,8 +34,7 @@ public class RecipeValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        if (errors instanceof AbstractBindingResult) {
-            AbstractBindingResult bindingResult = (AbstractBindingResult) errors;
+        if (errors instanceof AbstractBindingResult bindingResult) {
             if (RecipeDTO.class.isAssignableFrom(target.getClass())) {
                 validateRecipe((RecipeDTO) target, bindingResult);
             }
@@ -42,42 +43,47 @@ public class RecipeValidator implements Validator {
 
     private void validateRecipe(RecipeDTO recipe, AbstractBindingResult bindingResult) {
         validateString(recipe.getName(), "name", bindingResult);
-        validateBoolean(recipe.getVegetarian(), "vegetarian", bindingResult);
-        validateInteger(recipe.getServings(), "servings", bindingResult);
-        validateIngredientList(recipe.getIngredients(), "ingredients", bindingResult);
+        validateBoolean(recipe.getVegetarian(), bindingResult);
+        validateInteger(recipe.getServings(), bindingResult);
+        validateIngredientList(recipe.getIngredients(), bindingResult);
         validateString(recipe.getCookingInstructions(), "cookingInstructions", bindingResult);
     }
 
-    private void validateIngredientList(List<String> value, String fieldName, AbstractBindingResult bindingResult) {
+    private void validateIngredientList(List<String> value, AbstractBindingResult bindingResult) {
         if (value ==null) {
-            bindingResult.addError(new FieldError(OBJECT_NAME, fieldName, ValidationCodes.NOT_NULL.getCode()));
+            buildErrorCode("ingredients", null, ValidationCodes.NOT_NULL, bindingResult);
         } else if (value.isEmpty()) {
-            bindingResult.addError(new FieldError(OBJECT_NAME, fieldName, ValidationCodes.NOT_EMPTY.getCode()));
+            buildErrorCode("ingredients", value, ValidationCodes.NOT_EMPTY, bindingResult);
         } else if (value.stream().anyMatch(i -> Objects.isNull(i) || i.isBlank())) {
-            bindingResult.addError(new FieldError(OBJECT_NAME, fieldName, ValidationCodes.INVALID_LIST_VALUE.getCode()));
+            buildErrorCode("ingredients", value, ValidationCodes.NOT_EMPTY, bindingResult);
         }
     }
 
-    private void validateInteger(Integer integer, String fieldName, AbstractBindingResult bindingResult) {
+    private void validateInteger(Integer integer, AbstractBindingResult bindingResult) {
         if (integer == null) {
-            bindingResult.addError(new FieldError(OBJECT_NAME, fieldName, ValidationCodes.NOT_NULL.getCode()));
+            buildErrorCode("servings", integer, ValidationCodes.NOT_NULL, bindingResult);
         } else if (integer <= 0) {
-            bindingResult.addError(new FieldError(OBJECT_NAME, fieldName, ValidationCodes.GT_ZERO.getCode()));
+            buildErrorCode("servings", integer, ValidationCodes.GT_ZERO, bindingResult);
         }
     }
 
-    private void validateBoolean(Boolean value, String fieldName, AbstractBindingResult bindingResult) {
+    private void validateBoolean(Boolean value, AbstractBindingResult bindingResult) {
         if (value == null) {
-            bindingResult.addError(new FieldError(OBJECT_NAME, fieldName, ValidationCodes.NOT_NULL.getCode()));
+            buildErrorCode("vegetarian", null, ValidationCodes.NOT_NULL, bindingResult);
         }
     }
 
     private void validateString(String value, String fieldName, AbstractBindingResult bindingResult) {
         if (value ==null) {
-            bindingResult.addError(new FieldError(OBJECT_NAME, fieldName, ValidationCodes.NOT_NULL.getCode()));
+            buildErrorCode(fieldName, null, ValidationCodes.NOT_NULL, bindingResult);
         } else if (value.isBlank()) {
-            bindingResult.addError(new FieldError(OBJECT_NAME, fieldName, ValidationCodes.NOT_EMPTY.getCode()));
+            buildErrorCode(fieldName, value, ValidationCodes.NOT_EMPTY, bindingResult);
         }
+    }
+
+    private void buildErrorCode(String field, Object value, ValidationCodes codes, AbstractBindingResult bindingResult) {
+        bindingResult.addError(new FieldError(OBJECT_NAME, field, value, false,
+                new String[]{codes.getCode()}, null, codes.getMessage()));
     }
 }
 
@@ -86,10 +92,11 @@ public class RecipeValidator implements Validator {
 @RequiredArgsConstructor
 enum ValidationCodes {
 
-    NOT_NULL("Value may not be null."),
-    GT_ZERO("Please specify a value greater than zero."),
-    NOT_EMPTY("Value may not be empty."),
-    INVALID_LIST_VALUE("One or more values in the list are null or empty");
+    NOT_NULL("non-null","Value may not be null."),
+    GT_ZERO("greater_than_zero","Please specify a value greater than zero."),
+    NOT_EMPTY("non_empty", "Value may not be empty."),
+    INVALID_LIST_VALUE("invalid_list_value", "One or more values in the list are null or empty");
 
     private final String code;
+    private final String message;
 }

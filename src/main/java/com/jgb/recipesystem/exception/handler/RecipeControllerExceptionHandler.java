@@ -2,10 +2,15 @@ package com.jgb.recipesystem.exception.handler;
 
 import com.jgb.recipesystem.exception.DuplicateEntryException;
 import com.jgb.recipesystem.exception.RecipeNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.List;
 
 /**
  * RecipeControllerExceptionHandler
@@ -16,22 +21,39 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * @author Jaime Gotor Blazquez
  * @since 08 March 2022
  */
+@Slf4j
+@RequiredArgsConstructor
 @ControllerAdvice(basePackageClasses = com.jgb.recipesystem.controller.RecipeController.class)
 public class RecipeControllerExceptionHandler {
 
     /**
-     * Handles custom exceptions
-     * and DataValidationException thrown during ProductsController calls
+     * Handles exception coming from input validation
+     * @param e MethodArgumentNotValidException
+     * @return ResponseEntity with HttpStatus.BadRequest and an error message
+     */
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Object> methodArgumentNotValidException(MethodArgumentNotValidException e) {
+        List<FieldError> errors = e.getBindingResult().getFieldErrors();
+        List<ErrorMessage> errorMessageList = errors.stream().map(this::mapToErrorMessage).toList();
+        return ResponseEntity.badRequest().body(errorMessageList);
+    }
+
+    private ErrorMessage mapToErrorMessage(FieldError e) {
+        return ErrorMessage.builder().code(e.getCode()).message(e.getDefaultMessage())
+                .rejectedValue(e.getRejectedValue()).build();
+    }
+
+    /**
+     * Handles DuplicateEntryException and RecipeNotFoundException exceptions
      * @param e exception thrown
      * @return ResponseEntity with HttpStatus.BadRequest and an error message
      */
     @ExceptionHandler(value = {
             DuplicateEntryException.class,
-            RecipeNotFoundException.class,
-            MethodArgumentNotValidException.class
+            RecipeNotFoundException.class
     })
     public ResponseEntity<Object> customException(Exception e) {
-        return ResponseEntity.badRequest().body(e.getMessage());
+        return ResponseEntity.badRequest().body(ErrorMessage.builder().message(e.getMessage()).build());
     }
 
 }
