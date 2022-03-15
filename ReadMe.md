@@ -15,9 +15,16 @@ the different functionalities of the application.
 The application is protected against unauthorized user requests. For simplicity, in-memory authentication is used to store
 user details.
 
+The credentials for the users are the following:
+- Admin role -> user: admin, password: password
+  -User role -> user: user, password: password
+
+Users with 'admin' role are allowed to execute any request, users with 'user' role are only allowed to get information about recipes.
+
 The application contains API documentation on the following endpoints
 - host:port/recipe-system/swagger-ui/index.html#/
 - host:port/recipe-system/api-documentation
+
 
 ### Prerequisites
 Prerequisites to install
